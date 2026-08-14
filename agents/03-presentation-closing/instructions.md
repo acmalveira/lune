@@ -1,1 +1,1 @@
-
+consultar conhecimento
