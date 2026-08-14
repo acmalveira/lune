@@ -1,1 +1,81 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Proposta Enviada",
+    "version": "2.0.0",
+    "description": "Ação que confirma o envio da proposta visual, atualiza a planilha e retorna o status do envio de e-mail, incluindo o link da imagem no Cloudinary."
+  },
+  "servers": [
+    {
+      "url": "https://eob180cnb87u649.m.pipedream.net"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "propostaEnviada",
+        "summary": "Confirmação da proposta criada e envio de e-mail",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "E-mail do lead"
+                  },
+                  "justificativa": {
+                    "type": "string",
+                    "description": "Justificativa estratégica da proposta. Será utilizada pelo agente de apresentação para conduzir a reunião e explicar o raciocínio por trás da proposta."
+                  },
+                  "proposta_enviada": {
+                    "type": "string",
+                    "enum": ["SIM"],
+                    "description": "Confirma que a proposta foi enviada. Valor fixo: 'SIM'."
+                  }
+                },
+                "required": ["email", "justificativa", "proposta_enviada"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmação do processamento e status do e-mail, além do link da imagem da proposta no Cloudinary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "description": "Status retornado pela API de envio de e-mail (ex.: 'SENT')"
+                    },
+                    "summary": {
+                      "type": "string",
+                      "description": "Resumo do processamento do envio de e-mail (ex.: 'Successfully sent the email')"
+                    },
+                    "mensagem": {
+                      "type": "string",
+                      "description": "Mensagem descritiva com o status do envio para o lead"
+                    },
+                    "link_imagem_cloudinary": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "Link da imagem da proposta salva no Cloudinary"
+                    }
+                  },
+                  "required": ["status", "summary", "mensagem", "link_imagem_cloudinary"]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
