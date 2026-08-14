@@ -1,1 +1,82 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Buscar dados do lead",
+    "version": "1.0.0",
+    "description": "Recupera os dados de um lead a partir do e-mail cadastrado"
+  },
+  "servers": [
+    {
+      "url": "https://hook.us2.make.com"
+    }
+  ],
+  "paths": {
+    "/foweruwv9be2g3u6jdjbnqot54h8o1bu": {
+      "post": {
+        "operationId": "infosDoLead",
+        "summary": "Buscar informações do lead pelo e-mail",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "E-mail do lead"
+                  }
+                },
+                "required": ["email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Dados do lead retornados com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "nome": { "type": "string" },
+                    "email": { "type": "string", "format": "email" },
+                    "empresa": { "type": "string" },
+                    "segmento": { "type": "string" },
+                    "porte": { "type": "string" },
+                    "objetivo": { "type": "string" },
+                    "recursos_desejados": { "type": "string" },
+                    "maturidade_digital": { "type": "string" },
+                    "canal_origem": { "type": "string" },
+                    "perfil": { "type": "string" },
+                    "interesse": { "type": "string" },
+                    "quadrante": { "type": "string" },
+                    "classificacao_final": { "type": "string" },
+                    "comentario_agente": { "type": "string" },
+                    "whatsapp": { "type": "string" },
+                    "diagnostico_validado": { "type": "string" },
+                    "funcionalidades_prioritarias": { "type": "string" },
+                    "argumentos_personalizados": { "type": "string" },
+                    "validacao_final": { "type": "string" }
+                  },
+                  "required": [
+                    "email",
+                    "objetivo",
+                    "recursos_desejados",
+                    "funcionalidades_prioritarias"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lead não encontrado"
+          }
+        }
+      }
+    }
+  }
+}
 
