@@ -1,1 +1,134 @@
+openapi: 3.1.1
+info:
+  title: Fechamento BambooTec (Activepieces Webhook)
+  version: "1.0.0"
+  description: >
+    Envia os dados do lead para atualizar planilha, disparar e-mails e retornar
+    a rota do fluxo (fechamento ou nutrição).
+servers:
+  - url: https://cloud.activepieces.com/api/v1/webhooks/I77HG97jufntsE71R6rag
+paths:
+  /:
+    post:
+      summary: Disparar fluxo de fechamento/nutrição
+      operationId: dispararFechamento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: E-mail do lead (chave primária).
+                nome:
+                  type: string
+                visualizou_apresentacao:
+                  type: string
+                  enum: ["SIM","NÃO","NA"]
+                  default: "SIM"
+                preferencia_contato:
+                  type: string
+                  description: Canal preferido informado pelo lead.
+                  enum: ["whatsapp","email"]
+                whatsapp:
+                  type: string
+                  description: Telefone informado (qualquer formato; será normalizado).
+                orcamento:
+                  type: object
+                  description: Itens e preços do orçamento + total.
+                  additionalProperties: true
+                  properties:
+                    total:
+                      type: number
+                      example: 2580
+                quer_fechar:
+                  type: boolean
+                  description: Sinalização de fechamento do lead.
+                link_proposta:
+                  type: string
+                  format: uri
+                observacoes:
+                  type: string
+              required: [email, nome, orcamento]
+            examples:
+              fechamento:
+                summary: Lead quer fechar
+                value:
+                  email: anacarolina.work@gmail.com
+                  nome: "Ana (Lead de Teste)"
+                  visualizou_apresentacao: "SIM"
+                  preferencia_contato: "whatsapp"
+                  whatsapp: "(35) 9 9876-5432"
+                  orcamento:
+                    item1: "Website institucional (5 páginas)" 
+                    preco1: 1800
+                    item2: "Blog + SEO básico"
+                    preco2: 580
+                    item3: "Hospedagem 1º mês"
+                    preco3: 200
+                    total: 2580
+                  quer_fechar: true
+                  link_proposta: "https://exemplo.com/proposta-visual.jpg"
+                  observacoes: "Integração com WhatsApp"
+              nutricao:
+                summary: Lead não quer fechar (nutrição)
+                value:
+                  email: lead@empresa.com
+                  nome: "João Silva"
+                  visualizou_apresentacao: "SIM"
+                  preferencia_contato: "email"
+                  orcamento:
+                    item1: "Landing Page"
+                    preco1: 1200
+                    total: 1200
+                  quer_fechar: false
+                  observacoes: "Vai avaliar com a direção"
+      responses:
+        "200":
+          description: Sucesso (lead encontrado e fluxo executado)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  rota:
+                    type: string
+                    enum: [fechamento, nutricao]
+                  email:
+                    type: string
+                  updated_at:
+                    type: string
+                    description: Timestamp ISO aproximado
+              examples:
+                fechado:
+                  value: { ok: true, rota: "fechamento", email: "anacarolina.work@gmail.com", updated_at: "2025-08-28T15:21:00Z" }
+                nutrir:
+                  value: { ok: true, rota: "nutricao", email: "lead@empresa.com", updated_at: "2025-08-28T15:21:00Z" }
+        "404":
+          description: Lead não encontrado na planilha
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean, example: false }
+                  error: { type: string, example: "linha_nao_encontrada" }
+                  msg: { type: string, example: "Nenhuma linha correspondente foi encontrada na planilha." }
+        "400":
+          description: Payload inválido (ex. e-mail ausente)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean, example: false }
+                  error: { type: string, example: "email_invalido" }
+                  msg: { type: string, example: "E-mail ausente ou inválido." }
 
