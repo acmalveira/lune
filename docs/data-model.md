@@ -95,3 +95,10 @@ Presentation & Closing
 Decision
   ├── Closing
   └── Nurturing / Follow-up
+
+
+## Data Integrity
+
+The workflows use structured JSON payloads and validation rules to maintain consistency between the conversational agents and automation platforms.
+
+The qualification workflow also checks whether the lead already exists before creating a new record, using the email as the primary key. This prevents duplicate records and supports idempotent execution.
