@@ -1,1 +1,101 @@
+openapi: 3.1.0
+info:
+  title: Buscar informações do lead
+  version: 2.0.0
+paths:
+  /:
+    post:
+      summary: Retorna os dados do lead a partir do email
+      operationId: infosDoLead
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+      responses:
+        "200":
+          description: Dados retornados com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadResponse'
+servers:
+  - url: https://eo3ahvlc991k246.m.pipedream.net
+
+components:
+  schemas:
+    LeadRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email do lead
+      required:
+        - email
+
+    LeadResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        dados:
+          type: object
+          properties:
+            data_hora:
+              type: string
+            nome_do_lead:
+              type: string
+            email_do_lead:
+              type: string
+            empresa_negocio:
+              type: string
+            segmento:
+              type: string
+            porte_do_negocio:
+              type: string
+            objetivo_com_o_site:
+              type: string
+            recursos_desejados:
+              type: string
+            nivel_de_maturidade_digital:
+              type: string
+            canal_de_origem:
+              type: string
+            perfil:
+              type: string
+            interesse:
+              type: string
+            quadrante:
+              type: string
+            classificacao_final:
+              type: string
+            comentario_do_agente:
+              type: string
+            whatsapp:
+              type: string
+            diagnostico_validado:
+              type: string
+            funcionalidades_prioritarias:
+              type: string
+            argumentos_personalizados:
+              type: string
+            validacao_final:
+              type: string
+            proposta_enviada:
+              type: string
+            justificativa_da_proposta:
+              type: string
+            email_ao_lead:
+              type: string
+            link_da_imagem_proposta:
+              type: string
+              format: uri
+              description: Link otimizado da imagem da proposta no Cloudinary
+            
+
+          required:
+            - nome_do_lead
+            - email_do_lead
+            - link_da_imagem_proposta
 
