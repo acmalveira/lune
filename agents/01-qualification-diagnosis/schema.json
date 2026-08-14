@@ -1,1 +1,74 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Gravar Lead Qualificado",
+    "version": "1.1.0"
+  },
+  "paths": {
+    "/": {
+      "post": {
+        "summary": "Enviar dados de lead qualificado para o Make",
+        "operationId": "enviarLead",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data_hora": { "type": "string", "description": "Data e hora da qualificação" },
+                  "nome_lead": { "type": "string", "description": "Nome do lead" },
+                  "email": { "type": "string", "description": "Email do lead" },
+                  "empresa_negocio": { "type": "string", "description": "Empresa ou negócio" },
+                  "segmento": { "type": "string", "description": "Segmento de atuação" },
+                  "porte_negocio": { "type": "string", "description": "Porte do negócio" },
+                  "objetivo_site": { "type": "string", "description": "Objetivo com o site" },
+                  "recursos_desejados": { "type": "string", "description": "Funcionalidades desejadas" },
+                  "nivel_maturidade_digital": { "type": "string", "description": "Nível de maturidade digital" },
+                  "canal_origem": { "type": "string", "description": "Origem do contato (Instagram, site...)" },
+                  "perfil": { "type": "string", "description": "Letra da matriz (A, B, C, D)" },
+                  "interesse": { "type": "string", "description": "Nível de interesse (1 a 4)" },
+                  "quadrante": { "type": "string", "description": "Resultado combinado (ex: A2, C4...)" },
+                  "classificacao_final": { "type": "string", "description": "Qualificado, Em acompanhamento ou Não ideal" },
+                  "comentario_agente": { "type": "string", "description": "Observações do agente" },
+                  "whatsapp": { "type": "string", "description": "Número de WhatsApp do lead" },
+
+                  "diagnostico_validado": { "type": "string", "description": "Se o diagnóstico foi validado" },
+                  "funcionalidades_prioritarias": { "type": "string", "description": "Funcionalidades recomendadas" },
+                  "argumentos_personalizados": { "type": "string", "description": "Argumentos personalizados para a proposta" },
+                  "validacao_final": { "type": "string", "description": "Validação final do diagnóstico" }
+                },
+                "required": [
+                  "nome_lead",
+                  "email",
+                  "whatsapp",
+                  "objetivo_site",
+                  "perfil",
+                  "interesse",
+                  "quadrante",
+                  "classificacao_final",
+                  "diagnostico_validado",
+                  "funcionalidades_prioritarias",
+                  "argumentos_personalizados",
+                  "validacao_final"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lead enviado com sucesso"
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://hook.us2.make.com/reirn01eg0q4vtadbofeq13fb7sy74a5"
+    }
+  ]
+}
+
 
