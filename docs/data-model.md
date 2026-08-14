@@ -95,10 +95,21 @@ Presentation & Closing
 Decision
   ├── Closing
   └── Nurturing / Follow-up
-'''
+```
 
 ## Data Integrity
 
 The workflows use structured JSON payloads and validation rules to maintain consistency between the conversational agents and automation platforms.
 
 The qualification workflow also checks whether the lead already exists before creating a new record, using the email as the primary key. This prevents duplicate records and supports idempotent execution.
+
+## External Data Services
+
+The structured data is persisted and exchanged through the services integrated into the pipeline:
+
+Google Sheets
+Google Drive
+Cloudinary
+Gmail
+
+These services support data persistence, document storage, visual asset management, and communication respectively.
