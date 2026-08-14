@@ -1,0 +1,75 @@
+{
+  "name": "Fechamento",
+  "platform": "ActivePieces",
+  "status": "PUBLISHED",
+  "description": "Fluxo de fechamento: localiza o lead, atualiza dados de interação, envia comunicação e registra a rota.",
+  "pieces": [
+    "webhook",
+    "google-sheets",
+    "gmail"
+  ],
+  "steps": [
+    {
+      "name": "Encontrar linhas",
+      "action": "google-sheets.find_rows",
+      "purpose": "Localiza o lead pelo e-mail."
+    },
+    {
+      "name": "Validar existência",
+      "type": "router",
+      "purpose": "Trata o caso em que nenhuma linha correspondente é encontrada."
+    },
+    {
+      "name": "Code",
+      "type": "code",
+      "purpose": "Formata orçamento, normaliza WhatsApp, define preferência de contato e gera link."
+    },
+    {
+      "name": "Atualizar linha",
+      "action": "google-sheets.update_row",
+      "fields": [
+        "Apresentação Visualizada",
+        "Orçamento",
+        "Quer Fechar",
+        "Contato Preferencial"
+      ]
+    },
+    {
+      "name": "Router",
+      "type": "router",
+      "branches": [
+        "Fechamento",
+        "Nutrição"
+      ]
+    },
+    {
+      "name": "Enviar e-mail - Lead",
+      "action": "gmail.send_email"
+    },
+    {
+      "name": "Enviar e-mail - Interno Fechamento",
+      "action": "gmail.send_email"
+    },
+    {
+      "name": "Atualizar linha Fechamento",
+      "action": "google-sheets.update_row"
+    },
+    {
+      "name": "Enviar e-mail - Lead Copy",
+      "action": "gmail.send_email"
+    },
+    {
+      "name": "Atualizar linha Nutrição",
+      "action": "google-sheets.update_row"
+    },
+    {
+      "name": "Retornar Resposta",
+      "action": "webhook.return_response"
+    }
+  ],
+  "security_notes": [
+    "IDs de conexão, planilha, contas e dados privados foram removidos.",
+    "E-mails reais, IDs de arquivos e URLs privadas não são incluídos.",
+    "Credenciais devem permanecer nas conexões seguras do ActivePieces."
+  ]
+}
