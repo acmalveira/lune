@@ -1,0 +1,156 @@
+{
+  "name": "Agent 03 - Proposal Presentation and Closing",
+  "description": "Sanitized representation of the Pipedream workflow shown in the implementation screenshots. Secrets and platform-specific credential identifiers are intentionally replaced with placeholders.",
+  "type": "pipedream_workflow_sanitized",
+  "version": "1.0",
+  "steps": [
+    {
+      "name": "trigger",
+      "app": "webhook",
+      "action": "http_trigger",
+      "inputs": {
+        "expected_body_fields": [
+          "email",
+          "proposta_enviada",
+          "justificativa"
+        ]
+      }
+    },
+    {
+      "name": "find_row",
+      "app": "google_sheets",
+      "action": "find_row",
+      "inputs": {
+        "spreadsheet": "Dados coletados do Agente 01",
+        "worksheet": "Leads",
+        "column": "C",
+        "value": "{{steps.trigger.event.body.email}}",
+        "export_row": true
+      }
+    },
+    {
+      "name": "update_cell_Proposta",
+      "app": "google_sheets",
+      "action": "update_cell",
+      "inputs": {
+        "spreadsheet": "Dados coletados do Agente 01",
+        "worksheet": "Leads",
+        "cell": "V{{steps.find_row.$return_value[0].googleSheetsRowNumber}}",
+        "value": "{{steps.trigger.event.body.proposta_enviada}}"
+      }
+    },
+    {
+      "name": "update_cell_Justificativa",
+      "app": "google_sheets",
+      "action": "update_cell",
+      "inputs": {
+        "spreadsheet": "Dados coletados do Agente 01",
+        "worksheet": "Leads",
+        "cell": "W{{steps.find_row.$return_value[0].googleSheetsRowNumber}}",
+        "value": "{{steps.trigger.event.body.justificativa}}"
+      }
+    },
+    {
+      "name": "list_files",
+      "app": "google_drive",
+      "action": "list_files",
+      "inputs": {
+        "drive": "My Drive",
+        "parent_folder": "{{steps.find_row.$return_value[0].row[24]}}",
+        "fields": "files(id, mimeType, name, webContentLink, webViewLink)",
+        "filter_text": ".png",
+        "filter_type": "CONTAINS",
+        "trashed": false
+      }
+    },
+    {
+      "name": "hash",
+      "app": "nodejs",
+      "action": "code",
+      "inputs": {
+        "code": "import crypto from \"crypto\";\n\nexport default defineComponent({\n  props: {\n    api_secret: {\n      type: \"string\",\n      label: \"Cloudinary API Secret\",\n      secret: true\n    }\n  },\n  async run({ steps }) {\n    const timestamp = Math.floor(Date.now() / 1000);\n    const folder = \"propostas\";\n\n    const string_to_sign = `folder=${folder}&timestamp=${timestamp}${this.api_secret}`;\n    const signature = crypto\n      .createHash(\"sha1\")\n      .update(string_to_sign)\n      .digest(\"hex\");\n\n    return {\n      timestamp,\n      signature,\n      folder\n    };\n  },\n});",
+        "secret_placeholder": "{{CLOUDINARY_API_SECRET}}"
+      }
+    },
+    {
+      "name": "custom_request",
+      "app": "http",
+      "action": "request",
+      "inputs": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/{{CLOUDINARY_CLOUD_NAME}}/image/upload",
+        "content_type": "multipart/form-data",
+        "body": {
+          "file": "https://drive.google.com/uc?export=download&id={{steps.list_files.$return_value[0].id}}",
+          "api_key": "{{CLOUDINARY_API_KEY}}",
+          "timestamp": "{{steps.hash.$return_value.timestamp}}",
+          "signature": "{{steps.hash.$return_value.signature}}",
+          "folder": "{{steps.hash.$return_value.folder}}"
+        }
+      }
+    },
+    {
+      "name": "update_cell1",
+      "app": "google_sheets",
+      "action": "update_cell",
+      "inputs": {
+        "spreadsheet": "Dados coletados do Agente 01",
+        "worksheet": "Leads",
+        "cell": "Z{{steps.find_row.$return_value[0].googleSheetsRowNumber}}",
+        "value": "{{steps.custom_request.$return_value.secure_url}}"
+      }
+    },
+    {
+      "name": "send_email",
+      "app": "gmail",
+      "action": "send_email",
+      "inputs": {
+        "to": "{{steps.trigger.event.body.email}}",
+        "bcc": "{{BAMBOO_BCC_EMAIL}}",
+        "from_name": "Bamboo Tec",
+        "from_email": "{{GMAIL_FROM_EMAIL}}",
+        "reply_to": "{{GMAIL_REPLY_TO}}",
+        "subject": "Sua proposta personalizada está pronta! 💡✨",
+        "body_type": "html",
+        "body": "<p>Olá {{steps.find_row.$return_value[0].row[1]}},</p>\n\n<p>Conforme alinhamos, sua <strong>proposta visual está pronta</strong>! Ela foi criada com muito cuidado, baseada no seu diagnóstico, nos seus objetivos e nas funcionalidades que você deseja para o seu site.</p>\n\n<p>Lembre-se de usar <strong>o mesmo endereço de e-mail cadastrado</strong>: {{steps.find_row.$return_value[0].row[2]}}</p>\n\n<p><strong>Agora é hora de conferir todos os detalhes com o Agente de Apresentação e avançar:</strong></p>\n\n<p>\n<a href=\"https://chatgpt.com/g/g-68389417a3c081918a8f9ce715e3ff30-agente-integrado-de-apresentacao-e-fechamento\" target=\"_blank\" style=\"font-size: 16px; font-weight: bold;\">\n👉 Acessar agente e visualizar minha proposta\n</a>\n</p>\n\n<p>Se quiser esclarecer dúvidas ou entender melhor qualquer ponto, basta acessar sua proposta no link acima. 💙</p>\n\n<p>Estamos juntos nessa jornada para fortalecer sua presença digital com estratégia, beleza e eficiência.</p>\n\n<p>Com carinho,<br>\n<strong>Bamboo Tec</strong><br>\nSua presença digital começa aqui 🚀</p>"
+      }
+    },
+    {
+      "name": "update_cell",
+      "app": "google_sheets",
+      "action": "update_cell",
+      "inputs": {
+        "spreadsheet": "Dados coletados do Agente 01",
+        "worksheet": "Leads",
+        "cell": "X{{steps.find_row.$return_value[0].googleSheetsRowNumber}}",
+        "value": "{{steps.send_email.$return_value.labelIds[0]}}"
+      }
+    },
+    {
+      "name": "return_http_response",
+      "app": "webhook",
+      "action": "return_http_response",
+      "inputs": {
+        "status_code": 200,
+        "body": {
+          "status": "{{steps.send_email.$return_value.labelIds[0]}}",
+          "summary": "{{steps.send_email.$summary}}",
+          "mensagem": "E-mail enviado para {{steps.trigger.event.body.email}} com sucesso!",
+          "imagem_no_cloudinary": "{{steps.custom_request.$return_value.secure_url}}"
+        }
+      }
+    }
+  ],
+  "security": {
+    "sanitized": true,
+    "excluded": [
+      "Cloudinary API secret",
+      "Cloudinary API key",
+      "Google OAuth credentials",
+      "Gmail credentials",
+      "private account identifiers",
+      "private webhook secrets"
+    ]
+  },
+  "important_note": "This is a sanitized workflow representation, not a guaranteed Pipedream import/export file. Exact Pipedream internal IDs, connection IDs, trigger metadata, and app-version metadata were not available in the screenshots."
+}
