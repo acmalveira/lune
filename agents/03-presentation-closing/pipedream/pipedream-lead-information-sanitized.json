@@ -1,0 +1,77 @@
+{
+  "name": "Lead Information",
+  "description": "Sanitized representation of the Pipedream workflow that retrieves a lead from Google Sheets and returns structured lead information.",
+  "type": "pipedream_workflow_sanitized",
+  "version": "1.0",
+  "steps": [
+    {
+      "name": "trigger",
+      "app": "webhook",
+      "action": "http_trigger",
+      "inputs": {
+        "email": "{{steps.trigger.event.body.email}}"
+      }
+    },
+    {
+      "name": "find_row",
+      "app": "google_sheets",
+      "action": "find_row",
+      "inputs": {
+        "drive": "My Drive",
+        "spreadsheet": "Dados coletados do Agente 01",
+        "worksheet": "Leads",
+        "column": "C",
+        "value": "{{steps.trigger.event.body.email}}",
+        "export_row": true
+      }
+    },
+    {
+      "name": "return_http_response",
+      "app": "webhook",
+      "action": "return_http_response",
+      "inputs": {
+        "status_code": 200,
+        "response_body": {
+          "wrapper": "{{steps.find_row.$return_value[0].row[25]}}",
+          "success": true,
+          "dados": {
+            "data_hora": "{{steps.find_row.$return_value[0].row[0]}}",
+            "nome_do_lead": "{{steps.find_row.$return_value[0].row[1]}}",
+            "email_do_lead": "{{steps.find_row.$return_value[0].row[2]}}",
+            "empresa_negocio": "{{steps.find_row.$return_value[0].row[3]}}",
+            "segmento": "{{steps.find_row.$return_value[0].row[4]}}",
+            "porte_do_negocio": "{{steps.find_row.$return_value[0].row[5]}}",
+            "objetivo_com_o_site": "{{steps.find_row.$return_value[0].row[6]}}",
+            "recursos_desejados": "{{steps.find_row.$return_value[0].row[7]}}",
+            "nivel_de_maturidade_digital": "{{steps.find_row.$return_value[0].row[8]}}",
+            "canal_de_origem": "{{steps.find_row.$return_value[0].row[9]}}",
+            "perfil": "{{steps.find_row.$return_value[0].row[10]}}",
+            "interesse": "{{steps.find_row.$return_value[0].row[11]}}",
+            "quadrante": "{{steps.find_row.$return_value[0].row[12]}}",
+            "classificacao_final": "{{steps.find_row.$return_value[0].row[13]}}",
+            "comentario_do_agente": "{{steps.find_row.$return_value[0].row[14]}}",
+            "whatsapp": "{{steps.find_row.$return_value[0].row[15]}}",
+            "diagnostico_validado": "{{steps.find_row.$return_value[0].row[16]}}",
+            "funcionalidades_prioritarias": "{{steps.find_row.$return_value[0].row[17]}}",
+            "argumentos_personalizados": "{{steps.find_row.$return_value[0].row[18]}}",
+            "validacao_final": "{{steps.find_row.$return_value[0].row[19]}}",
+            "proposta_enviada": "{{steps.find_row.$return_value[0].row[21]}}",
+            "justificativa_da_proposta": "{{steps.find_row.$return_value[0].row[22]}}",
+            "email_ao_lead": "{{steps.find_row.$return_value[0].row[23]}}",
+            "link_da_imagem_proposta": "{{steps.find_row.$return_value[0].row[25]}}"
+          }
+        },
+        "response_headers": {}
+      }
+    }
+  ],
+  "security": {
+    "sanitized": true,
+    "excluded": [
+      "Google OAuth credentials",
+      "private webhook secrets",
+      "account authentication data"
+    ]
+  },
+  "important_note": "This is a sanitized workflow representation based on the supplied Pipedream screenshots. It is not a guaranteed Pipedream import/export file because platform-internal connection IDs and metadata were not available."
+}
