@@ -67,7 +67,7 @@
         ],
         "sheetId": "Leads",
         "sortOrder": "asc",
-        "spreadsheetId": "12mYyhdx5kbtJCkSlF7XNjQwkkpDzRK5Idbo5tKkmrnk",
+        "spreadsheetId": "<GOOGLE_SHEET_ID>",
         "tableFirstRow": "A1:CZ1",
         "includesHeaders": true,
         "valueRenderOption": "FORMATTED_VALUE",
